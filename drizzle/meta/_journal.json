@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1757432010424,
+      "tag": "0000_dusty_mikhail_rasputin",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1757432479466,
+      "tag": "0001_watery_excalibur",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1757432818639,
+      "tag": "0002_mighty_star_brand",
+      "breakpoints": true
+    }
+  ]
+}

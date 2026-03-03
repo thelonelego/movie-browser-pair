@@ -1,0 +1,13 @@
+{
+    "name": "Current Movie Browser",
+    "image": "mcr.microsoft.com/devcontainers/typescript-node:22-bookworm",
+    "postCreateCommand": "npm install",
+    "postStartCommand": "npm run db:populate",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "qwtel.sqlite-viewer"
+            ]
+        }
+    }
+}
