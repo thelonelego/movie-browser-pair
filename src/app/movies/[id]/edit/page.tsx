@@ -56,9 +56,9 @@ export default function EditMoviePage({ params }: EditMoviePageProps) {
           year: movieData.year.toString(),
           runtime: movieData.runtime.toString(),
           genres: movieData.genres.join(', '),
-          director: Array.isArray(movieData.directors) ? movieData.directors.join(', ') : movieData.directors,
-          actors: Array.isArray(movieData.actors) ? movieData.actors.join(', ') : movieData.actors,
-          plot: movieData.plot,
+          director: Array.isArray(movieData.directors) ? movieData.directors.join(', ') : (movieData.directors ?? ''),
+          actors: Array.isArray(movieData.actors) ? movieData.actors.join(', ') : (movieData.actors ?? ''),
+          plot: movieData.plot ?? '',
           posterUrl: movieData.posterUrl || ''
         });
 
@@ -98,7 +98,7 @@ export default function EditMoviePage({ params }: EditMoviePageProps) {
         genres: formData.genres.split(',').map(g => g.trim()).filter(g => g),
         directors: formData.director.split(',').map(d => d.trim()).filter(d => d),
         actors: formData.actors.split(',').map(a => a.trim()).filter(a => a),
-        plot: formData.plot.trim(),
+        plot: (formData.plot ?? '').trim(),
         posterUrl: formData.posterUrl.trim() || null
       };
 

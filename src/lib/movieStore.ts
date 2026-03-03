@@ -203,6 +203,10 @@ class MovieStore {
 
   async updateMovie(id: number, movie: Partial<Omit<NewMovie, 'id'>>): Promise<Movie | null> {
     return await db.transaction(async (tx) => {
+      // Verify movie exists before any updates (especially when only relationships are updated)
+      const [existing] = await tx.select().from(movies).where(eq(movies.id, id));
+      if (!existing) return null;
+
       // Update movie basic info (excluding relationships)
       const movieToUpdate: Partial<{
         title: string;

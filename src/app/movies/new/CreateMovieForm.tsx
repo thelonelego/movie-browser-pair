@@ -41,10 +41,11 @@ export function CreateMovieForm() {
     setError(null);
 
     try {
+      const yearNum = parseInt(formData.year.trim(), 10);
       const newMovie: NewMovie = {
         title: formData.title.trim(),
-        year: parseInt(formData.year.trim()),
-        runtime: parseInt(formData.runtime.trim()) || 0,
+        year: Number.isNaN(yearNum) ? 0 : yearNum,
+        runtime: parseInt(formData.runtime.trim(), 10) || 0,
         genres: formData.genres.split(',').map(g => g.trim()).filter(g => g),
         directors: formData.director.split(',').map(d => d.trim()).filter(d => d),
         actors: formData.actors.split(',').map(a => a.trim()).filter(a => a),
@@ -53,8 +54,15 @@ export function CreateMovieForm() {
         rating: 0
       };
 
-      if (!newMovie.title || !newMovie.year) {
-        throw new Error('Title and year are required');
+      if (!newMovie.title) {
+        throw new Error('Title is required');
+      }
+      const yearTrimmed = formData.year.trim();
+      if (!yearTrimmed) {
+        throw new Error('Year is required');
+      }
+      if (Number.isNaN(yearNum) || yearNum < 1) {
+        throw new Error('Please enter a valid year');
       }
 
       await createMovie(newMovie);
@@ -73,7 +81,7 @@ export function CreateMovieForm() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-6" noValidate>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="title">Title *</Label>

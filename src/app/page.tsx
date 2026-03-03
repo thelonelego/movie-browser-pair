@@ -43,7 +43,7 @@ export default function MovieListPage() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     setCurrentPage(1);
-    fetchMovies({ page: 1, query: searchQuery || undefined });
+    // Rely on useEffect to fetch when currentPage/searchQuery update; avoid double fetch
   };
 
   if (loading) {
@@ -90,6 +90,9 @@ export default function MovieListPage() {
         <Button type="submit">Search</Button>
       </form>
 
+      {movies.length === 0 ? (
+        <div className="text-center py-10 text-muted-foreground">No movies found.</div>
+      ) : (
       <div className="grid grid-cols-3 gap-6 mb-8">
         {movies.map((movie) => (
           <Link key={movie.id} href={`/movies/${movie.id}`}>
@@ -121,6 +124,7 @@ export default function MovieListPage() {
           </Link>
         ))}
       </div>
+      )}
 
       {totalPages > 1 && (
         <div className="flex justify-center items-center gap-4">

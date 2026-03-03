@@ -12,26 +12,35 @@ interface DeleteButtonProps {
 
 export function DeleteButton({ movieId, movieTitle }: DeleteButtonProps) {
   const [isDeleting, setIsDeleting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleDelete = async () => {
     if (!confirm(`Are you sure you want to delete "${movieTitle}"?`)) {
       return;
     }
 
+    setError(null);
     setIsDeleting(true);
     try {
       await deleteMovie(movieId);
       // The server action will handle the redirect
-    } catch (error) {
-      alert('Failed to delete movie: ' + (error instanceof Error ? error.message : 'Unknown error'));
+    } catch (err) {
+      setError('Failed to delete movie: ' + (err instanceof Error ? err.message : 'Unknown error'));
       setIsDeleting(false);
     }
   };
 
   return (
-    <Button onClick={handleDelete} variant="destructive" disabled={isDeleting}>
-      <Trash2 className="mr-2 h-4 w-4" />
-      {isDeleting ? 'Deleting...' : 'Delete Movie'}
-    </Button>
+    <div className="space-y-2">
+      {error && (
+        <p className="text-sm text-destructive" role="alert">
+          {error}
+        </p>
+      )}
+      <Button onClick={handleDelete} variant="destructive" disabled={isDeleting}>
+        <Trash2 className="mr-2 h-4 w-4" />
+        {isDeleting ? 'Deleting...' : 'Delete Movie'}
+      </Button>
+    </div>
   );
 }
