@@ -11,14 +11,20 @@ interface DeleteButtonProps {
 }
 
 export function DeleteButton({ movieId, movieTitle }: DeleteButtonProps) {
+  const [showConfirm, setShowConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleDelete = async () => {
-    if (!confirm(`Are you sure you want to delete "${movieTitle}"?`)) {
-      return;
-    }
+  const handleDeleteClick = () => {
+    setError(null);
+    setShowConfirm(true);
+  };
 
+  const handleCancel = () => {
+    setShowConfirm(false);
+  };
+
+  const handleConfirmDelete = async () => {
     setError(null);
     setIsDeleting(true);
     try {
@@ -37,10 +43,25 @@ export function DeleteButton({ movieId, movieTitle }: DeleteButtonProps) {
           {error}
         </p>
       )}
-      <Button onClick={handleDelete} variant="destructive" disabled={isDeleting}>
-        <Trash2 className="mr-2 h-4 w-4" />
-        {isDeleting ? 'Deleting...' : 'Delete Movie'}
-      </Button>
+      {showConfirm ? (
+        <div className="flex flex-wrap items-center gap-2" role="dialog" aria-labelledby="delete-confirm-heading" aria-describedby="delete-confirm-desc">
+          <span id="delete-confirm-heading" className="sr-only">Confirm delete</span>
+          <p id="delete-confirm-desc" className="text-sm">
+            Are you sure you want to delete &quot;{movieTitle}&quot;?
+          </p>
+          <Button type="button" variant="outline" size="sm" onClick={handleCancel} disabled={isDeleting}>
+            Cancel
+          </Button>
+          <Button type="button" variant="destructive" size="sm" onClick={handleConfirmDelete} disabled={isDeleting}>
+            {isDeleting ? 'Deleting...' : 'Delete'}
+          </Button>
+        </div>
+      ) : (
+        <Button onClick={handleDeleteClick} variant="destructive" disabled={isDeleting}>
+          <Trash2 className="mr-2 h-4 w-4" />
+          Delete Movie
+        </Button>
+      )}
     </div>
   );
 }

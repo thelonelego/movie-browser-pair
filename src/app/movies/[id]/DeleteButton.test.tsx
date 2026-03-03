@@ -11,7 +11,20 @@ vi.mock('@/lib/actions', () => ({
 describe('DeleteButton', () => {
   beforeEach(() => {
     vi.mocked(deleteMovie).mockReset();
-    window.confirm = vi.fn(() => true);
+  });
+
+  it('shows inline confirmation before delete', async () => {
+    vi.mocked(deleteMovie).mockResolvedValue(undefined);
+    const user = userEvent.setup();
+
+    render(<DeleteButton movieId={1} movieTitle="Test Movie" />);
+
+    await user.click(screen.getByRole('button', { name: /delete movie/i }));
+
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+    expect(screen.getByText(/are you sure you want to delete/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /^cancel$/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /^delete$/i })).toBeInTheDocument();
   });
 
   it('shows inline error when delete fails', async () => {
@@ -21,6 +34,7 @@ describe('DeleteButton', () => {
     render(<DeleteButton movieId={1} movieTitle="Test Movie" />);
 
     await user.click(screen.getByRole('button', { name: /delete movie/i }));
+    await user.click(screen.getByRole('button', { name: /^delete$/i }));
 
     await waitFor(() => {
       expect(screen.getByRole('alert')).toHaveTextContent(/failed to delete movie/i);

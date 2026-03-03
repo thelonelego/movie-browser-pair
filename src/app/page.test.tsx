@@ -16,6 +16,30 @@ describe('MovieListPage', () => {
     vi.mocked(getMovies).mockReset();
   });
 
+  it('keeps header and search visible while loading', async () => {
+    let resolvePromise: (value: unknown) => void;
+    vi.mocked(getMovies).mockImplementation(
+      () => new Promise((resolve) => { resolvePromise = resolve; })
+    );
+
+    render(<MovieListPage />);
+
+    expect(screen.getByRole('heading', { name: /movie browser/i })).toBeInTheDocument();
+    expect(screen.getByRole('searchbox', { name: /search movies by title/i })).toBeInTheDocument();
+    expect(screen.getByText(/loading movies/i)).toBeInTheDocument();
+
+    resolvePromise!({
+      movies: [],
+      page: 1,
+      count: 0,
+      itemsPerPage: 20,
+      totalPages: 0,
+    });
+    await waitFor(() => {
+      expect(screen.getByText(/no movies found/i)).toBeInTheDocument();
+    });
+  });
+
   it('shows empty state when no movies are returned', async () => {
     vi.mocked(getMovies).mockResolvedValue({
       movies: [],
@@ -63,5 +87,59 @@ describe('MovieListPage', () => {
     });
 
     expect(screen.getByText('Test Movie')).toBeInTheDocument();
+  });
+
+  it('search input has accessible label', async () => {
+    vi.mocked(getMovies).mockResolvedValue({
+      movies: [],
+      page: 1,
+      count: 0,
+      itemsPerPage: 20,
+      totalPages: 0,
+    });
+
+    render(<MovieListPage />);
+
+    await waitFor(() => {
+      expect(getMovies).toHaveBeenCalled();
+    });
+
+    const searchInput = screen.getByRole('searchbox', { name: /search movies by title/i });
+    expect(searchInput).toBeInTheDocument();
+    expect(searchInput).toHaveAttribute('aria-label', 'Search movies by title');
+  });
+
+  it('submitting search calls getMovies with query', async () => {
+    vi.mocked(getMovies)
+      .mockResolvedValueOnce({
+        movies: [],
+        page: 1,
+        count: 0,
+        itemsPerPage: 20,
+        totalPages: 0,
+      })
+      .mockResolvedValueOnce({
+        movies: [],
+        page: 1,
+        count: 0,
+        itemsPerPage: 20,
+        totalPages: 0,
+      });
+
+    const user = userEvent.setup();
+    render(<MovieListPage />);
+
+    await waitFor(() => {
+      expect(getMovies).toHaveBeenCalledWith({ page: 1, query: undefined });
+    });
+
+    const searchbox = screen.getByRole('searchbox', { name: /search movies by title/i });
+    await user.clear(searchbox);
+    await user.paste('drama');
+    await user.click(screen.getByRole('button', { name: /search/i }));
+
+    await waitFor(() => {
+      expect(getMovies).toHaveBeenLastCalledWith({ page: 1, query: 'drama' });
+    });
   });
 });

@@ -46,24 +46,6 @@ export default function MovieListPage() {
     // Rely on useEffect to fetch when currentPage/searchQuery update; avoid double fetch
   };
 
-  if (loading) {
-    return (
-      <div className="container mx-auto px-6 py-8">
-        <h1 className="text-3xl font-bold mb-8">Movie Browser</h1>
-        <div className="text-center py-10 text-muted-foreground">Loading movies...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="container mx-auto px-6 py-8">
-        <h1 className="text-3xl font-bold mb-8">Movie Browser</h1>
-        <div className="text-center py-10 text-destructive">Error: {error}</div>
-      </div>
-    );
-  }
-
   return (
     <div className="container mx-auto px-6 py-8 max-w-4xl">
       <div className="flex justify-between items-center mb-8">
@@ -91,7 +73,15 @@ export default function MovieListPage() {
         <Button type="submit">Search</Button>
       </form>
 
-      {movies.length === 0 ? (
+      {error ? (
+        <div className="text-center py-10 text-destructive" role="alert">
+          Error: {error}
+        </div>
+      ) : loading ? (
+        <div className="text-center py-10 text-muted-foreground" aria-live="polite">
+          Loading movies...
+        </div>
+      ) : movies.length === 0 ? (
         <div className="text-center py-10 text-muted-foreground">No movies found.</div>
       ) : (
       <div className="grid grid-cols-3 gap-6 mb-8">
