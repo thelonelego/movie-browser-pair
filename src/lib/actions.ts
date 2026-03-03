@@ -1,8 +1,7 @@
 'use server'
 
 import { movieStore } from '@/lib/movieStore';
-import { NewMovie, MovieResponse, GetMovieListQueryParams } from '@/app/types/movie';
-import { Movie } from '@/lib/db/schema';
+import { Movie, NewMovie, MovieResponse, GetMovieListQueryParams } from '@/app/types/movie';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { filterByYear, sortMovies, paginateMovies } from '@/lib/utils';

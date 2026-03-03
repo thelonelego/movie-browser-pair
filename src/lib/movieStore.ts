@@ -29,6 +29,7 @@ class MovieStore {
   }
 
   async getAllMovies(): Promise<Movie[]> {
+    try {
     // Get all movies first
     const allMovies = await db.select().from(movies);
     
@@ -80,9 +81,14 @@ class MovieStore {
       actors: actorsByMovie.get(movie.id) || [],
       directors: directorsByMovie.get(movie.id) || [],
     }));
+    } catch (error) {
+      console.error('movieStore.getAllMovies failed:', error);
+      throw error;
+    }
   }
 
   async getMovieById(id: number): Promise<Movie | undefined> {
+    try {
     // Get the movie
     const movieResult = await db.select().from(movies).where(eq(movies.id, id)).limit(1);
     if (movieResult.length === 0) return undefined;
@@ -113,9 +119,14 @@ class MovieStore {
       actors: movieActorsData.map(a => a.name),
       directors: movieDirectorsData.map(d => d.name),
     };
+    } catch (error) {
+      console.error('movieStore.getMovieById failed:', error);
+      throw error;
+    }
   }
 
   async searchMovies(query: string): Promise<Movie[]> {
+    try {
     if (!this.fuse) {
       await this.initializeFuse();
     }
@@ -124,6 +135,10 @@ class MovieStore {
     
     const results = this.fuse.search(query);
     return results.map(result => result.item);
+    } catch (error) {
+      console.error('movieStore.searchMovies failed:', error);
+      throw error;
+    }
   }
 
   filterByGenre(movies: Movie[], genre: string): Movie[] {
@@ -138,6 +153,7 @@ class MovieStore {
   }
 
   async addMovie(movie: Omit<NewMovie, 'id'>): Promise<Movie> {
+    try {
     return await db.transaction(async (tx) => {
       // Insert the movie (without relationships)
       const movieToInsert = {
@@ -199,9 +215,14 @@ class MovieStore {
         directors: movie.directors,
       };
     });
+    } catch (error) {
+      console.error('movieStore.addMovie failed:', error);
+      throw error;
+    }
   }
 
   async updateMovie(id: number, movie: Partial<Omit<NewMovie, 'id'>>): Promise<Movie | null> {
+    try {
     return await db.transaction(async (tx) => {
       // Verify movie exists before any updates (especially when only relationships are updated)
       const [existing] = await tx.select().from(movies).where(eq(movies.id, id));
@@ -289,15 +310,24 @@ class MovieStore {
       // Return the updated movie with all relationships
       return await this.getMovieById(id) || null;
     });
+    } catch (error) {
+      console.error('movieStore.updateMovie failed:', error);
+      throw error;
+    }
   }
 
   async deleteMovie(id: number): Promise<boolean> {
+    try {
     const result = await db.delete(movies).where(eq(movies.id, id)).returning();
     if (result.length > 0) {
       await this.updateFuseIndex();
       return true;
     }
     return false;
+    } catch (error) {
+      console.error('movieStore.deleteMovie failed:', error);
+      throw error;
+    }
   }
 
   async getMovieCount(): Promise<number> {

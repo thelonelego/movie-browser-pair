@@ -1,22 +1,11 @@
-export interface Movie {
-  id: number;
-  title: string;
-  year: number;
-  runtime: number;
-  genres: string[];
-  directors: string[];
-  actors: string[];
-  plot: string;
-  posterUrl: string | null;
-  rating: number;
-}
-
-export interface NewMovie extends Omit<Movie, 'id'> {
-  id?: number;
-}
+/**
+ * Single source of truth for movie types used across the app.
+ * Movie and NewMovie are re-exported from the DB schema so UI and data layer stay in sync.
+ */
+export type { Movie, NewMovie } from '@/lib/db/schema';
 
 export interface MovieResponse {
-  movies: Movie[];
+  movies: import('@/lib/db/schema').Movie[];
   page: number;
   count: number;
   itemsPerPage: number;

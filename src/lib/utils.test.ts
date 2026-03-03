@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { filterByYear, sortMovies, paginateMovies } from './utils';
-import type { Movie } from '@/lib/db/schema';
+import type { Movie } from '@/app/types/movie';
 
 function mockMovie(overrides: Partial<Movie> = {}): Movie {
   return {

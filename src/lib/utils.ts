@@ -1,7 +1,6 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { Movie } from '@/lib/db/schema';
-import { MovieResponse } from '@/app/types/movie';
+import { Movie, MovieResponse } from '@/app/types/movie';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))

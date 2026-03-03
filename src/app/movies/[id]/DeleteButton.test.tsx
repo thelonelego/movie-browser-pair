@@ -14,7 +14,7 @@ describe('DeleteButton', () => {
   });
 
   it('shows inline confirmation before delete', async () => {
-    vi.mocked(deleteMovie).mockResolvedValue(undefined);
+    vi.mocked(deleteMovie).mockResolvedValue(true);
     const user = userEvent.setup();
 
     render(<DeleteButton movieId={1} movieTitle="Test Movie" />);

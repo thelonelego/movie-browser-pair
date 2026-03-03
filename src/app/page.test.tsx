@@ -3,6 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MovieListPage from './page';
 import { getMovies } from '@/lib/actions';
+import type { MovieResponse } from './types/movie';
 
 vi.mock('@/lib/actions', () => ({
   getMovies: vi.fn(),
@@ -17,9 +18,9 @@ describe('MovieListPage', () => {
   });
 
   it('keeps header and search visible while loading', async () => {
-    let resolvePromise: (value: unknown) => void;
+    let resolvePromise: (value: MovieResponse) => void;
     vi.mocked(getMovies).mockImplementation(
-      () => new Promise((resolve) => { resolvePromise = resolve; })
+      () => new Promise<MovieResponse>((resolve) => { resolvePromise = resolve; })
     );
 
     render(<MovieListPage />);
